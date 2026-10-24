@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyVideoAI</title>
+<style>
+*{box-sizing:border-box}
+:root{color-scheme:dark}
+body{margin:0;font-family:Arial,sans-serif;background:#090b12;color:#f5f5ff}
+header{padding:20px 18px;border-bottom:1px solid #242638;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:23px;font-weight:800}.logo span{color:#a78bfa}
+.badge{font-size:10px;color:#c6b6ff;border:1px solid #55418c;padding:6px 9px;border-radius:20px}
+main{max-width:650px;margin:auto;padding:24px 16px 40px}
+.hero{text-align:center;padding:25px 8px 28px}
+.hero h1{font-size:35px;margin:0 0 12px;line-height:1.15}.hero h1 span{color:#a78bfa}
+.hero p{color:#a6a8bc;line-height:1.6;font-size:14px}
+.card{background:#121522;border:1px solid #292d43;border-radius:18px;padding:18px;margin-bottom:16px}
+label,.section-title{display:block;font-weight:bold;font-size:14px;margin-bottom:12px}
+textarea{width:100%;min-height:120px;resize:vertical;background:#090c16;border:1px solid #30344b;border-radius:12px;padding:13px;color:white;font:inherit;font-size:14px;outline:none}
+textarea:focus,select:focus{border-color:#a78bfa}
+.hint{color:#8589a1;font-size:12px;line-height:1.5;margin-top:9px}
+.styles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.style{border:1px solid #30344b;background:#0b0e18;color:#e8e8f5;padding:14px 10px;border-radius:12px;text-align:left;font-size:14px;cursor:pointer}
+.style small{display:block;color:#9296ad;margin-top:6px}
+.style.active{border-color:#a78bfa;background:#211b39}
+select{width:100%;padding:13px;color:white;background:#090c16;border:1px solid #30344b;border-radius:10px;font-size:14px}
+.generate{width:100%;padding:17px;border:0;border-radius:13px;color:white;font-weight:bold;font-size:16px;background:linear-gradient(100deg,#7854e8,#a855f7);cursor:pointer}
+#result{display:none;margin-top:18px;line-height:1.6;overflow-wrap:anywhere}
+.preview{background:#090c16;border:1px dashed #55418c;border-radius:12px;padding:15px;margin-top:12px}
+footer{text-align:center;color:#72768d;font-size:12px;padding:22px}
+</style>
+</head>
+<body>
+<header><div class="logo">MyVideo<span>AI</span> ✦</div><div class="badge">PERSONAL STUDIO</div></header>
+<main>
+<section class="hero"><h1>Imagine it.<br><span>Bring it to life.</span></h1><p>Turn your ideas into video concepts.<br>Choose a style and describe your imagination.</p></section>
+<section class="card">
+<label for="prompt">✍️ Describe your video</label>
+<textarea id="prompt" placeholder="Example: A tiny astronaut exploring a glowing alien forest at night..."></textarea>
+<div class="hint">Describe the characters, setting, action and mood.</div>
+</section>
+<section class="card"><div class="section-title">🎨 Choose a visual style</div>
+<div class="styles">
+<button class="style active" data-style="3D Animation">🎬 3D Animation<small>Animated worlds</small></button>
+<button class="style" data-style="Anime">⚡ Anime<small>Anime-inspired scenes</small></button>
+<button class="style" data-style="Stickman">✏️ Stickman<small>Simple characters</small></button>
+<button class="style" data-style="Cinematic">🎥 Cinematic<small>Film-like scenes</small></button>
+<button class="style" data-style="Cartoon">🎨 Cartoon<small>Colorful adventures</small></button>
+<button class="style" data-style="Fantasy">🐉 Fantasy<small>Magic and legends</small></button>
+</div></section>
+<section class="card"><label for="ratio">📐 Video format</label><select id="ratio"><option value="16:9">Landscape — 16:9</option><option value="9:16">Portrait — 9:16</option><option value="1:1">Square — 1:1</option></select><div class="hint">Choose a format for widescreen, vertical or square video.</div></section>
+<section class="card"><label for="duration">⏱️ Target duration</label><select id="duration"><option>5 seconds</option><option>10 seconds</option><option>15 seconds</option><option>30 seconds</option></select></section>
+<button class="generate" id="generate">✨ Create Video Concept</button>
+<section class="card" id="result"><div class="section-title">🎞️ Your video concept</div><div id="resultText"></div><div class="preview"><strong>Generation status</strong><p id="status"></p></div></section>
+</main>
+<footer>MyVideoAI · Your ideas, your creative studio</footer>
+<script>
+let selectedStyle = "3D Animation";
+document.querySelectorAll(".style").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".style").forEach(item => item.classList.remove("active"));
+    button.classList.add("active");
+    selectedStyle = button.dataset.style;
+  });
+});
+function escapeHTML(text) {
+  return text.replace(/[&<>"']/g, character => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+  })[character]);
+}
+document.getElementById("generate").addEventListener("click", () => {
+  const prompt = document.getElementById("prompt").value.trim();
+  if (!prompt) {
+    alert("Describe your video idea first!");
+    document.getElementById("prompt").focus();
+    return;
+  }
+  const ratio = document.getElementById("ratio").value;
+  const duration = document.getElementById("duration").value;
+  document.getElementById("resultText").innerHTML =
+    "<p><strong>Idea:</strong> " + escapeHTML(prompt) + "</p>" +
+    "<p><strong>Style:</strong> " + escapeHTML(selectedStyle) + "</p>" +
+    "<p><strong>Format:</strong> " + ratio + "</p>" +
+    "<p><strong>Duration:</strong> " + escapeHTML(duration) + "</p>";
+  document.getElementById("status").textContent =
+    "Your concept is ready. Real AI video rendering is not connected yet; this is the first interface prototype.";
+  const result = document.getElementById("result");
+  result.style.display = "block";
+  result.scrollIntoView({behavior:"smooth", block:"start"});
+});
+</script>
+</body>
+                                                                                                             </html>
+                                                                                                             
+                                                                                                               
